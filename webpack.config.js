@@ -7,7 +7,7 @@ function resolve(dir) {
 const htmlWebpackPlugin = require("html-webpack-plugin")
 
 module.exports = {
-  entry: './main.js',
+  entry: './dist/src/index.js',
   output: {
     path: resolve("dist"),
     filename: 'main.js',
