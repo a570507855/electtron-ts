@@ -4,8 +4,8 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 //自动生成html的插件
-const htmlWebpackPlugin = require("html-webpack-plugin")
-
+const htmlWebpackPlugin = require("html-webpack-plugin");
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 module.exports = {
   entry: './src/index.ts',
   devtool: "inline-source-map",
@@ -29,17 +29,7 @@ module.exports = {
         //使用loader时，是从右向左读取
         use: ['style-loader', 'css-loader']
       },
-      //less-loader
-      {
-        test: /\.less$/,
-        use: [{
-          loader: "style-loader" // creates style nodes from JS strings
-        }, {
-          loader: "css-loader" // translates CSS into CommonJS
-        }, {
-          loader: "less-loader" // compiles Less to CSS
-        }]
-      },
+
       {
         test: /\.(eot|svg|ttf|woff|woff2)\w*/,
         loader: 'file-loader?publicPath=/bulma/dist/font/&outputPath=font/'
@@ -67,21 +57,17 @@ module.exports = {
       // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
       {
         test: /\.tsx?$/,
-        loader: "ts-loader"
-      },
-      //babel-loader 将es6转化为es5
-      {
-        test: /\.js$/,
-        //exclude 排除
-        //include 包含
-        exclude: /(node_modules|bower_components)/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['es2015']
-          }
+        loader: "ts-loader",
+        exclude: /node_modules/,
+        options: {
+          appendTsSuffixTo: [/\.vue$/],
         }
-      }
+      },
+      {
+        test: /\.vue$/,
+        use: 'vue-loader'
+      },
+
     ]
   },
   //插件的配置
@@ -89,5 +75,6 @@ module.exports = {
     new htmlWebpackPlugin({
       template: 'index.html'
     }),
+    new VueLoaderPlugin()
   ],
 }
