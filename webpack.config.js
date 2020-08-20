@@ -7,11 +7,16 @@ function resolve(dir) {
 const htmlWebpackPlugin = require("html-webpack-plugin")
 
 module.exports = {
-  entry: './dist/src/index.js',
+  entry: './src/index.ts',
+  devtool: "inline-source-map",
   output: {
     path: resolve("dist"),
-    filename: 'main.js',
+    filename: 'index.js',
     publicPath: './'
+  },
+  resolve: {
+    // Add `.ts` and `.tsx` as a resolvable extension.
+    extensions: [".ts", ".tsx", ".js"]
   },
   target: 'electron-renderer',
   module: {
@@ -58,6 +63,11 @@ module.exports = {
           },
 
         }]
+      },
+      // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
+      {
+        test: /\.tsx?$/,
+        loader: "ts-loader"
       },
       //babel-loader 将es6转化为es5
       {
