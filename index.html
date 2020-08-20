@@ -7,7 +7,7 @@
   <title>electron</title>
 </head>
 
-<body >
+<body>
   <div class="section">
     <a class="button is-primary" id="btn" ng-click="getFile()">获取文件内容</a>
     <div class="message">
@@ -20,8 +20,9 @@
     </div>
   </div>
 
-  <div id="app">
-    <div>test</div>
+  <div ng-app="app" ng-controller="appCtrl">
+    <div>{{title}}</div>
   </div>
 </body>
+
 </html>

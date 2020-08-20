@@ -1,20 +1,26 @@
 const electron = require('electron')
-const app = electron.app;                       //控制应用程序的事件生命周期
-const BrowserWindow = electron.BrowserWindow;   //创建窗体
+const app = electron.app; //控制应用程序的事件生命周期
+const BrowserWindow = electron.BrowserWindow; //创建窗体
 const globalShortcut = electron.globalShortcut; //注册快捷键
 
-console.log(app)
 // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 let mainWindow = null;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 800,
+    // width: 800,
+    // height: 800,
+    show: false,
+
     webPreferences: {
       nodeIntegration: true
     }
   });
+  mainWindow.maximize();
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
+
   mainWindow.loadFile('./dist/index.html');
   //打开开发者工具
   //mainWindow.webContents.openDevTools();
@@ -26,15 +32,15 @@ function createWindow() {
 app.whenReady().then(() => {
   createWindow();
 
-//   globalShortcut.register('CommandOrControl+W', () => {
-//     console.log("ctrl + W");
-//   });
+  //   globalShortcut.register('CommandOrControl+W', () => {
+  //     console.log("ctrl + W");
+  //   });
 
-//   globalShortcut.register('enter', () => {
-//     console.log('enter');
-//     return;
-//   })
-  
+  //   globalShortcut.register('enter', () => {
+  //     console.log('enter');
+  //     return;
+  //   })
+
   globalShortcut.register('CommandOrControl+Shift+Z', () => {
     console.log('ctrl + shift + z');
   })
