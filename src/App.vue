@@ -9,6 +9,10 @@
         </div>
       </div>
     </div>
+    <div class="section">
+      <a  class="button" @click="onMessage">调用dll弹出message窗口</a>
+      <a class="button is-primary" @click="onFindWindow">获取窗体名称为test的句柄</a>
+    </div>
   </div>
 </template>
 
@@ -16,6 +20,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 const fs = require('fs')
+const myUser32 = require('./dll/index');
 @Component
 export default class App extends Vue {
   title: string = '标题'
@@ -26,7 +31,11 @@ export default class App extends Vue {
       this.fileContent = err ? err : data.toString()
     })
   }
+  onMessage():void {
+    myUser32.MessageBoxW('内容','标题');
+  }
+  onFindWindow():void {
+    myUser32.FindWindow(null,'test');
+  }
 }
 </script>
-<style scoped>
-</style> 

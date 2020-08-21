@@ -80,6 +80,8 @@ module.exports = {
 
   ],
   externals: {
-    "ffi-napi": "require('ffi-napi')"
+    "ffi-napi": "require('ffi-napi')",
+    "ref-napi": "require('ref-napi')",
+    "ref-array-napi": "require('ref-array-napi')"
   }
 }

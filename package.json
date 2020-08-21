@@ -8,6 +8,8 @@
     "core-js": "^3.6.5",
     "ffi-napi": "^2.4.5",
     "font-awesome": "^4.7.0",
+    "ref-array-napi": "^1.2.1",
+    "ref-napi": "^3.0.0",
     "vue": "^2.6.12"
   },
   "devDependencies": {
