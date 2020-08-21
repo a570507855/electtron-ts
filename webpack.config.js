@@ -19,6 +19,7 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js"]
   },
   target: 'electron-renderer',
+  mode: 'development',
   module: {
     rules: [
       //css-loader
@@ -75,6 +76,11 @@ module.exports = {
     new htmlWebpackPlugin({
       template: 'index.html'
     }),
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+  //  new webpack.ContextReplacementPlugin(/bindings$/, /^$/)
   ],
+  externals: {
+    "bindings": "require('bindings')",
+    "ffi": "require('ffi')"
+}
 }
