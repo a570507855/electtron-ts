@@ -31,8 +31,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "setUTF-8": "chcp 65001",
-    "tsc":"tsc",
-    "build": "tsc && webpack",
+    "build": "webpack",
     "electron": "chcp 65001 && electron .",
     "packager": "electron-packager ./ myApp --out D:/OutApp --app-version 0.0.1 --overwrite --platform win32",
     "rebuild": "electron-rebuild  -v 9.2.1"

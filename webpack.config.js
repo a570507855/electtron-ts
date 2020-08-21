@@ -77,10 +77,9 @@ module.exports = {
       template: 'index.html'
     }),
     new VueLoaderPlugin(),
-  //  new webpack.ContextReplacementPlugin(/bindings$/, /^$/)
+
   ],
   externals: {
-    "bindings": "require('bindings')",
-    "ffi": "require('ffi')"
-}
+    "ffi-napi": "require('ffi-napi')"
+  }
 }
