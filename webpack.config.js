@@ -33,7 +33,7 @@ module.exports = {
 
       {
         test: /\.(eot|svg|ttf|woff|woff2)\w*/,
-        loader: 'file-loader?publicPath=/bulma/dist/font/&outputPath=font/'
+        loader: 'file-loader?publicPath=./font/&outputPath=font/'
       },
       // // font-awesome
       // {
