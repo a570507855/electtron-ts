@@ -27,5 +27,17 @@ export default new ffi.Library('user32', {
   'GetWindowRect':
     [
       'bool', ['int32', ref.refType(Rect)]
+    ],
+  'SendMessageA':
+    [
+      'int32', ['int32', ref.types.uint32, 'int32', 'int32']
+    ],
+  'PostMessageA':
+    [
+      'int32', ['int32', ref.types.uint32, 'int32', 'int32']
+    ],
+  'SetWindowTextW':
+    [
+      'bool', ['int32', 'string']
     ]
 });
