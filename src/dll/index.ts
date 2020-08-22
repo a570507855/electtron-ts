@@ -11,6 +11,9 @@ interface User32 {
   GetCursorPos: Function;
   WindowFromPoint: Function;
   GetWindowRect: Function;
+  SendMessageA: Function;
+  PostMessageA: Function;
+  SetWindowTextW: Function;
 }
 
 export default {
@@ -41,6 +44,18 @@ export default {
   GetWindowRect: (HWND: number) => {
     let rect = new Rect();
     return user32.GetWindowRect(HWND, rect.ref()) ? rect : 0;
+  },
+
+  SendMessageA: (HWND: number, msg: number, wParam: number, lParam: number) => {
+    return user32.SendMessageA(HWND, msg, wParam, lParam);
+  },
+
+  PostMessageA: (HWND: number, msg: number, wParam: number, lParam: number) => {
+    return user32.PostMessageA(HWND, msg, wParam, lParam);
+  },
+
+  SetWindowTextW: (HWND: number, title: string) => {
+    return user32.SetWindowTextW(HWND, toCString(title));
   }
 };
 
@@ -52,3 +67,4 @@ export default {
 function toCString(str: string, encoding: string = 'ucs2') {
   return ref.allocCString(str, encoding);
 }
+

@@ -70,6 +70,14 @@
           <input class="input" readonly v-model="windowPoint.y" />
         </div>
       </div>
+      <div class="field is-grouped level">
+        <div class="control">
+          <input class="input" placeholder="窗口标题" type="text" v-model="windowTitle" />
+        </div>
+        <div class="control">
+          <a @click="onSetWindowTitle" class="button is-primary">设置</a>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -79,13 +87,23 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 
 import myUser32 from './dll/index'
+import { wMsg, wParam } from './dll/Cenum'
+import { Point, Rect } from './dll/Cstruct'
 
+const ref = require('ref-napi')
 const { globalShortcut } = require('electron').remote
 const fs = require('fs')
-
+/**
+ *
+ * @param x x坐标  位于低位(二进制中右边)
+ * @param y y坐标  位于高位(二进制中左边)
+ */
+function getLparamPoint(x: number, y: number) {
+  return (y << 16) + x
+}
 @Component
 export default class App extends Vue {
-  title: string = '标题'
+  windowTitle: string = ''
   fileName: string = './package.json'
   fileContent: string = ''
   windowName: string = ''
@@ -113,6 +131,12 @@ export default class App extends Vue {
     )
   }
 
+  onSetWindowTitle(): void {
+    if (!this.windowHWND) return
+
+    myUser32.SetWindowTextW(this.windowHWND, this.windowTitle)
+  }
+
   mounted(): void {
     //注册全局按键
     globalShortcut.register('CommandOrControl+Shift+Z', () => {
@@ -137,6 +161,31 @@ export default class App extends Vue {
     globalShortcut.register('CommandOrControl+R', () => {
       if (!this.windowHWND) return
       this.windowRect = myUser32.GetWindowRect(this.windowHWND)
+    })
+
+    globalShortcut.register('CommandOrControl+G', () => {
+      if (!this.windowHWND) return
+
+      let nHittest = myUser32.PostMessageA(
+        this.windowHWND,
+        wMsg.WM_NCHITTEST,
+        0,
+        getLparamPoint(50, 50)
+      )
+      console.log(nHittest)
+      let processing = myUser32.PostMessageA(
+        this.windowHWND,
+        wMsg.WM_SETCURSOR,
+        1,
+        wMsg.WM_MOUSEMOVE
+      )
+      console.log(processing)
+      myUser32.PostMessageA(
+        this.windowHWND,
+        wMsg.WM_MOUSEMOVE,
+        0,
+        getLparamPoint(100, 200)
+      )
     })
   }
 }
