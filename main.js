@@ -17,7 +17,6 @@ function createWindow() {
       nodeIntegration: true
     }
   });
-  console.log(electron)
   mainWindow.maximize();
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();

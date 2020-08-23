@@ -12,3 +12,12 @@ export const Rect = Struct({
   right: ref.types.long,
   bottom: ref.types.long
 })
+
+export const MSG = Struct({
+  HWND: ref.types.int32,
+  message: ref.types.uint32,
+  wParam: ref.types.int32,
+  lParam: ref.types.int32,
+  time: ref.types.int32,
+  pt: Point
+})

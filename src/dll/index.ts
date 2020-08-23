@@ -1,19 +1,47 @@
 const ref = require('ref-napi');
 const refArray = require('ref-array-napi');
 
-import { Point, Rect } from './Cstruct';
+import { Point, Rect, MSG } from './Cstruct';
 import user32 from './user32';
+import kernel32 from './kernel32';
 
 interface User32 {
   MessageBoxW: Function;
+  GetForegroundWindow: Function;
   FindWindowW: Function;
-  GetActiveWindow: Function;
-  GetCursorPos: Function;
   WindowFromPoint: Function;
+
+  SendMessageW: Function;
+  GetMessageW: Function;
+  PostMessageW: Function;
+  PostThreadMessageW: Function;
+
+  GetActiveWindow: Function;
+  SetActiveWindow: Function;
+
+  GetCursorPos: Function;
+  SetCursorPos: Function;
+
   GetWindowRect: Function;
-  SendMessageA: Function;
-  PostMessageA: Function;
+
+  GetWindowTextW: Function;
   SetWindowTextW: Function;
+
+  GetClassNameW: Function;
+
+  MoveWindow: Function;
+
+  ChangeWindowMessageFilterEx: Function;
+
+  GetCurrentProcess: Function;
+  GetCurrentProcessId: Function;
+  GetCurrentThread: Function;
+  GetCurrentThreadId: Function;
+  GetWindowThreadProcessId: Function;
+
+  GetLastError: Function;
+
+  SetThreadPriority: Function;
 }
 
 export default {
@@ -21,19 +49,12 @@ export default {
     return user32.MessageBoxW(HWND, toCString(content), toCString(title), type);
   },
 
+  GetForegroundWindow: () => {
+    return user32.GetForegroundWindow();
+  },
+
   FindWindowW: (className: string, title: string): number => {
     return user32.FindWindowW(toCString(className), toCString(title));
-  },
-
-  GetActiveWindow: (): number => {
-    return user32.GetActiveWindow();
-  },
-
-  GetCursorPos: (): Promise<Function> => {
-    let point = new Point();
-    return new Promise((resolve, reject) => {
-      user32.GetCursorPos(point.ref()) ? resolve(point) : reject('获取鼠标位置失败');
-    })
   },
 
   WindowFromPoint: () => {
@@ -41,22 +62,103 @@ export default {
     return user32.GetCursorPos(point.ref()) ? user32.WindowFromPoint(point) : 0;
   },
 
+  SendMessageW: (HWND: number, msg: number, wParam: number, lParam: number) => {
+    return user32.SendMessageW(HWND, msg, wParam, lParam);
+  },
+
+  GetMessageW: (PMSG: any, HWND: number, firstMSG: number, lastMSG: number) => {
+    return user32.GetMessageW(PMSG, HWND, firstMSG, lastMSG);
+  },
+
+  PostMessageW: (HWND: number, msg: number, wParam: number, lParam: number) => {
+    return user32.PostMessageW(HWND, msg, wParam, lParam);
+  },
+
+  PostThreadMessageW: (threadid: number, msg: number, wParam: number, lParam: number) => {
+    return user32.PostThreadMessageW(threadid, msg, wParam, lParam);
+  },
+
+  GetActiveWindow: (): number => {
+    return user32.GetActiveWindow();
+  },
+  SetActiveWindow: (HWND: number) => {
+    return user32.SetActiveWindow(HWND);
+  },
+
+  GetCursorPos: (): Promise<Function> => {
+    let point = new Point();
+    user32.GetCursorPos(point.ref());
+    return point;
+  },
+  SetCursorPos: (x: number, y: number): boolean => {
+    return user32.SetCursorPos(x, y);
+  },
+
   GetWindowRect: (HWND: number) => {
     let rect = new Rect();
     return user32.GetWindowRect(HWND, rect.ref()) ? rect : 0;
   },
 
-  SendMessageA: (HWND: number, msg: number, wParam: number, lParam: number) => {
-    return user32.SendMessageA(HWND, msg, wParam, lParam);
+  GetWindowTextW: (HWND: number, length: number) => {
+    let str_buf = new Buffer(length);
+    user32.GetWindowTextW(HWND, str_buf, length);
+    return bufTrim(str_buf).toString('ucs2');
   },
 
-  PostMessageA: (HWND: number, msg: number, wParam: number, lParam: number) => {
-    return user32.PostMessageA(HWND, msg, wParam, lParam);
-  },
-
-  SetWindowTextW: (HWND: number, title: string) => {
+  SetWindowTextW: (HWND: number, title: string): boolean => {
     return user32.SetWindowTextW(HWND, toCString(title));
+  },
+
+  GetClassNameW: (HWND: number, length: number) => {
+    let str_buf = new Buffer(length);
+    user32.GetClassNameW(HWND, str_buf, length);
+    return bufTrim(str_buf).toString('ucs2');
+  },
+
+  MoveWindow: (HWND: number, x: number, y: number, width: number, height: number, isRedraw: boolean) => {
+    return user32.MoveWindow(HWND, x, y, width, height, isRedraw);
+  },
+
+  ChangeWindowMessageFilterEx: (HWND: number, wMsg: number, flag: number) => {
+    return user32.ChangeWindowMessageFilterEx(HWND, wMsg, flag);
+  },
+
+  GetWindowThreadProcessId: (HWND: number, processid: number) => {
+    return user32.GetWindowThreadProcessId(HWND, processid);
+  },
+
+  mouse_event: (flags: number, x: number, y: number, data: number, extrainfo: number) => {
+    return user32.mouse_event(flags, x, y, data, extrainfo);
+  },
+
+  SetWindowPos: (HWND: number, HWNDSetAfter: number, x: number, y: number, cx: number, cy: number, flags: number): boolean => {
+    return user32.SetWindowPos(HWND, HWNDSetAfter, x, y, cx, cy, flags)
+  },
+
+  GetCurrentProcess: () => {
+    return kernel32.GetCurrentProcess();
+  },
+
+  GetCurrentProcessId: () => {
+    return kernel32.GetCurrentProcessId();
+  },
+
+  GetCurrentThread: () => {
+    return kernel32.GetCurrentThread();
+  },
+
+  GetCurrentThreadId: () => {
+    return kernel32.GetCurrentThreadId();
+  },
+
+  GetLastError: () => {
+    return kernel32.GetLastError();
+  },
+
+  SetThreadPriority: (threadHWND: number, priority: number) => {
+    return kernel32.SetThreadPriority(threadHWND, priority);
   }
+
 };
 
 /**
@@ -66,5 +168,20 @@ export default {
  */
 function toCString(str: string, encoding: string = 'ucs2') {
   return ref.allocCString(str, encoding);
+}
+
+/**
+ * 去除Buffer尾端的空白数据
+ * @param buf 
+ */
+function bufTrim(buf: Buffer) {
+  let new_buf = new Buffer(0);
+  for (let i = buf.length - 1; i >= 0; --i) {
+    if (buf[i] !== 0) {
+      new_buf = buf.slice(0, i + 2);
+      break;
+    }
+  }
+  return new_buf;
 }
 

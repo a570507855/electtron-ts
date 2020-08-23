@@ -4,6 +4,8 @@ export enum wMsg {
   WM_DESTROY = 0x02,
   WM_MOVE = 0x0003,
 
+  WM_SHOWWINDOW = 0x0018,//控制窗口显示与隐藏
+
   WM_NCMOUSEMOVE = 0x00A0,//当光标在一个窗口的非客户区内移动时发送此消息给这个窗口 非客户区为：窗体的标题栏及窗 的边框体
   WM_NCLBUTTONDOWN = 0x00A1,//当光标在一个窗口的非客户区同时按下鼠标左键时提交此消息
   WM_NCLBUTTONUP = 0x00A2, //当用户释放鼠标左键同时光标某个窗口在非客户区时发送此消息
@@ -37,6 +39,8 @@ export enum wMsg {
 
   WM_NCHITTEST = 0x0084,//发送到窗口以确定窗口的哪个部分对应于特定的屏幕坐标
   WM_SETCURSOR = 0x0020 //如果鼠标使光标在窗口内移动并且未捕获鼠标输入，则发送到窗口。
+
+
 }
 
 export enum wParam {
