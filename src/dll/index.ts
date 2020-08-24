@@ -63,7 +63,10 @@ export default {
   },
 
   SendMessageW: (HWND: number, msg: number, wParam: number, lParam: number) => {
-    return user32.SendMessageW(HWND, msg, wParam, lParam);
+    return new Promise((resolve, reject) => {
+      let res = user32.SendMessageW(HWND, msg, wParam, lParam);
+      res ? resolve(res) : reject(res);
+    })
   },
 
   GetMessageW: (PMSG: any, HWND: number, firstMSG: number, lastMSG: number) => {
@@ -71,7 +74,10 @@ export default {
   },
 
   PostMessageW: (HWND: number, msg: number, wParam: number, lParam: number) => {
-    return user32.PostMessageW(HWND, msg, wParam, lParam);
+    return new Promise((resolve, reject) => {
+      let res = user32.PostMessageW(HWND, msg, wParam, lParam);
+      res ? resolve(res) : reject(res);
+    })
   },
 
   PostThreadMessageW: (threadid: number, msg: number, wParam: number, lParam: number) => {

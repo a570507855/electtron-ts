@@ -152,216 +152,216 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+import Vue from "vue";
+import Component from "vue-class-component";
 
-import win32API from './dll/index'
-import { wMsg, wParam } from './dll/Cenum'
-import { Point, Rect, MSG } from './dll/Cstruct'
-import { win32 } from 'path'
+import win32API from "./dll/index";
+import { wMsg, wParam } from "./dll/Cenum";
+import { Point, Rect, MSG} from "./dll/Cstruct";
+import { win32 } from "path";
 
-const ref = require('ref-napi')
-const { globalShortcut } = require('electron').remote
-const fs = require('fs')
+const ref = require("ref-napi");
+const { globalShortcut } = require("electron").remote;
+const fs = require("fs");
 
 @Component
 export default class App extends Vue {
-  fileName: string = './package.json'
-  fileContent: string = ''
-  windowTitle: string = ''
-  windowClassName: any = null
-  windowHWND: number = 0
-  foregroundHWND: number = 0
-  activeHWND: number = 0
-  windowPoint: Object = { x: 0, y: 0 }
-  windowRect: Object = { left: 0, right: 0, top: 0, bottom: 0 }
-  windowProcessid: number = 0
-  windowThreadid: number = 0
-  cursorPos = { x: 0, y: 0 }
-  curProcess: number = 0
-  curProcessid: number = 0
-  curThread: number = 0
-  curThreadid: number = 0
+  fileName: string = "./package.json";
+  fileContent: string = "";
+  windowTitle: string = "";
+  windowClassName: any = null;
+  windowHWND: number = 0;
+  foregroundHWND: number = 0;
+  activeHWND: number = 0;
+  windowPoint: Object = { x: 0, y: 0 };
+  windowRect: Object = { left: 0, right: 0, top: 0, bottom: 0 };
+  windowProcessid: number = 0;
+  windowThreadid: number = 0;
+  cursorPos = { x: 0, y: 0 };
+  curProcess: number = 0;
+  curProcessid: number = 0;
+  curThread: number = 0;
+  curThreadid: number = 0;
 
   get HWND_HEX(): string {
-    return this.toHEX(this.windowHWND)
+    return this.toHEX(this.windowHWND);
   }
 
   get foregroundHWND_HEX(): string {
-    return this.toHEX(this.foregroundHWND)
+    return this.toHEX(this.foregroundHWND);
   }
 
   get activeHWND_HEX(): string {
-    return this.toHEX(this.activeHWND)
+    return this.toHEX(this.activeHWND);
   }
 
   get windowProcessid_HEX(): string {
-    return this.toHEX(this.windowProcessid)
+    return this.toHEX(this.windowProcessid);
   }
 
   get windowThreadid_HEX(): string {
-    return this.toHEX(this.windowThreadid)
+    return this.toHEX(this.windowThreadid);
   }
 
   get curProcessid_HEX(): string {
-    return this.toHEX(this.curProcessid)
+    return this.toHEX(this.curProcessid);
   }
 
   get curThreadid_HEX(): string {
-    return this.toHEX(this.curThreadid)
+    return this.toHEX(this.curThreadid);
   }
 
   onGetFileContent(): void {
     fs.readFile(this.fileName, (err: any, data: Buffer) => {
-      this.fileContent = err ? err : data.toString()
-    })
+      this.fileContent = err ? err : data.toString();
+    });
   }
 
   onFindWindow(): void {
     this.windowHWND = win32API.FindWindowW(
       this.windowClassName,
       this.windowTitle
-    )
+    );
   }
 
   onSetWindowTitle(): void {
-    if (!this.windowHWND) return
+    if (!this.windowHWND) return;
 
-    win32API.SetWindowTextW(this.windowHWND, this.windowTitle)
+    win32API.SetWindowTextW(this.windowHWND, this.windowTitle);
   }
 
   onSetCursorPos(): void {
-    win32API.SetCursorPos(this.cursorPos.x, this.cursorPos.y)
+    win32API.SetCursorPos(this.cursorPos.x, this.cursorPos.y);
   }
 
   onSetActiveWindow() {
-    this.activeHWND = win32API.SetActiveWindow(this.windowHWND)
+    this.activeHWND = win32API.SetActiveWindow(this.windowHWND);
   }
 
   onShowWindow() {
-    if (!this.windowThreadid) return
+    if (!this.windowThreadid) return;
 
     let isShow = win32API.PostMessageW(
       this.windowHWND,
       wMsg.WM_SHOWWINDOW,
       1,
       0
-    )
+    );
 
     if (!isShow) {
-      let err = win32API.GetLastError()
-      console.log(err)
+      let err = win32API.GetLastError();
+      console.log(err);
     }
   }
 
   onHideWindow() {
-    if (!this.windowThreadid) return
+    if (!this.windowThreadid) return;
 
     let isHide = win32API.PostMessageW(
       this.windowHWND,
       wMsg.WM_SHOWWINDOW,
       0,
       0
-    )
+    );
     if (!isHide) {
-      let err = win32API.GetLastError()
-      console.log(err)
+      let err = win32API.GetLastError();
+      console.log(err);
     }
   }
 
   mounted(): void {
     setInterval(() => {
-      this.foregroundHWND = win32API.GetForegroundWindow()
-      this.activeHWND = win32API.GetActiveWindow()
-      this.windowPoint = win32API.GetCursorPos()
-      this.curProcess = win32API.GetCurrentProcess()
-      this.curProcessid = win32API.GetCurrentProcessId()
-      this.curThread = win32API.GetCurrentThread()
-      this.curThreadid = win32API.GetCurrentThreadId()
+      this.foregroundHWND = win32API.GetForegroundWindow();
+      this.activeHWND = win32API.GetActiveWindow();
+      this.windowPoint = win32API.GetCursorPos();
+      this.curProcess = win32API.GetCurrentProcess();
+      this.curProcessid = win32API.GetCurrentProcessId();
+      this.curThread = win32API.GetCurrentThread();
+      this.curThreadid = win32API.GetCurrentThreadId();
       if (!win32API.SetThreadPriority(this.curThread, 15)) {
-        console.log(win32API.GetLastError())
+        console.log(win32API.GetLastError());
       }
 
-      if (!this.windowHWND) return
+      if (!this.windowHWND) return;
 
       let chang1 = win32API.ChangeWindowMessageFilterEx(
         this.windowHWND,
         wMsg.WM_SHOWWINDOW,
         1
-      )
+      );
       if (!chang1) {
         console.log(
-          'ChangeWindowMessageFilterEx - WM_SHOWWINDOW:',
+          "ChangeWindowMessageFilterEx - WM_SHOWWINDOW:",
           win32API.GetLastError()
-        )
+        );
       }
       let chang2 = win32API.ChangeWindowMessageFilterEx(
         this.windowHWND,
         wMsg.WM_MOUSEMOVE,
         1
-      )
+      );
       if (!chang2) {
         console.log(
-          'ChangeWindowMessageFilterEx - WM_MOUSEMOVE:',
+          "ChangeWindowMessageFilterEx - WM_MOUSEMOVE:",
           win32API.GetLastError()
-        )
+        );
       }
-      this.windowRect = win32API.GetWindowRect(this.windowHWND)
-      this.windowTitle = win32API.GetWindowTextW(this.windowHWND, 100)
-      this.windowClassName = win32API.GetClassNameW(this.windowHWND, 100)
+      this.windowRect = win32API.GetWindowRect(this.windowHWND);
+      this.windowTitle = win32API.GetWindowTextW(this.windowHWND, 100);
+      this.windowClassName = win32API.GetClassNameW(this.windowHWND, 100);
       this.windowThreadid = win32API.GetWindowThreadProcessId(
         this.windowHWND,
         this.windowProcessid
-      )
-    }, 500)
+      );
+    }, 500);
 
     //注册全局按键
-    globalShortcut.register('1', () => {
-      if (!this.windowHWND) return
-      win32API.SetWindowPos(this.windowHWND, 0, 0, 0, 1920, 1080, 0x0040)
-    })
+    globalShortcut.register("1", () => {
+      if (!this.windowHWND) return;
+      win32API.SetWindowPos(this.windowHWND, 0, 0, 0, 1920, 1080, 0x0040);
+    });
 
-    globalShortcut.register('2', () => {
-      if (!this.windowHWND) return
+    globalShortcut.register("2", () => {
+      if (!this.windowHWND) return;
 
       let nHittest = win32API.SendMessageW(
         this.windowHWND,
         wMsg.WM_NCHITTEST,
         0,
         this.getLparamPoint(50, 50)
-      )
+      );
       //0x1 客户区
-      console.log('WM_NCHITTEST:', nHittest)
-    })
+      console.log("WM_NCHITTEST:", nHittest);
+    });
 
-    globalShortcut.register('CommandOrControl+Shift+Z', () => {
-      if (!this.windowHWND) return
-      win32API.MoveWindow(this.windowHWND, 0, 0, 1920, 1080, false)
-    })
+    globalShortcut.register("CommandOrControl+Shift+Z", () => {
+      if (!this.windowHWND) return;
+      win32API.MoveWindow(this.windowHWND, 0, 0, 1920, 1080, false);
+    });
 
-    globalShortcut.register('CommandOrControl+E', () => {
-      this.windowHWND = win32API.WindowFromPoint()
-    })
+    globalShortcut.register("CommandOrControl+E", () => {
+      this.windowHWND = win32API.WindowFromPoint();
+    });
 
-    globalShortcut.register('CommandOrControl+R', () => {
-      if (!this.windowHWND) return
-      this.windowRect = win32API.GetWindowRect(this.windowHWND)
-    })
+    globalShortcut.register("CommandOrControl+R", () => {
+      if (!this.windowHWND) return;
+      this.windowRect = win32API.GetWindowRect(this.windowHWND);
+    });
 
-    globalShortcut.register('CommandOrControl+G', () => {
-      if (!this.windowHWND) return
+    globalShortcut.register("CommandOrControl+G", () => {
+      if (!this.windowHWND) return;
 
       let isSuccess = win32API.SendMessageW(
         this.windowHWND,
         wMsg.WM_MOUSEMOVE,
         0,
         (932 >> 16) + 200
-      )
+      );
 
       if (!isSuccess) {
-        console.log('mousemove:', win32API.GetLastError())
+        console.log("mousemove:", win32API.GetLastError());
       }
-    })
+    });
   }
 
   /**
@@ -370,11 +370,11 @@ export default class App extends Vue {
    * @param y y坐标  位于高位(二进制中左边)
    */
   getLparamPoint(x: number, y: number) {
-    return (y << 16) + x
+    return (y << 16) + x;
   }
 
   toHEX(HWND: number) {
-    return `DEC: ${HWND}  -  HEX: ${Number(HWND).toString(16).toUpperCase()}`
+    return `DEC: ${HWND}  -  HEX: ${Number(HWND).toString(16).toUpperCase()}`;
   }
 }
 </script>

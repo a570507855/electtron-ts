@@ -21,3 +21,13 @@ export const MSG = Struct({
   time: ref.types.int32,
   pt: Point
 })
+
+export const Error = {
+  0: "ERROR_SUCCESS: 操作成功",
+  1: "ERROR_INVALID_FUNCTION: 无效的函数",
+  2: "ERROR_FILE_NOT_FOUND: 系统找不到指定文件",
+  3: "ERROR_PATH_NOT_FOUND: 系统找不到指定路径",
+  4: "ERROR_TOO_MANY_OPEN_FILES: 系统无法打开文件",
+  5: "ERROR_ACCESS_DENIED: 访问被拒绝",
+  6: "ERROR_INVALID_HANDLE: 句柄无效"
+}
