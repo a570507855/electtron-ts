@@ -98,5 +98,9 @@ export default new ffi.Library('user32', {
   'ChangeWindowMessageFilterEx':
     [
       'bool', ['int32', ref.types.uint32, 'int32']
+    ],
+  'ShowWindow':
+    [
+      'bool', ['int32', 'int32']
     ]
 });

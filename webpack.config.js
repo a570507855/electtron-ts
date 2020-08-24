@@ -18,7 +18,7 @@ module.exports = {
     // Add `.ts` and `.tsx` as a resolvable extension.
     extensions: [".ts", ".tsx", ".js"]
   },
-  target: 'electron-renderer',
+  target: 'electron-main',
   mode: 'development',
   module: {
     rules: [

@@ -32,6 +32,29 @@
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"
   },
+  "build": {
+    "productName": "阴阳师脚本",
+    "appId": "electron-yys",
+    "directories": {
+      "output": "D:/myElectronApp"
+    },
+    "files": [
+      "dist", "main.js"
+    ],
+    "win": {
+      "requestedExecutionLevel": "highestAvailable",
+      "icon": "./yys.ico",
+      "target": ["nsis", "zip"]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": false,
+      "shortcutName": "yys"
+    }
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "setUTF-8": "chcp 65001",
@@ -39,7 +62,7 @@
     "electron": "chcp 65001 && electron .",
     "start": "webpack && chcp 65001 && electron .",
     "packager": "electron-packager ./ myApp --out D:/OutApp --app-version 0.0.1 --overwrite --platform win32",
-    "rebuild": "electron-rebuild  -v 9.2.1"
+    "builder": "electron-builder"
   },
   "author": "许亦勇",
   "license": "ISC"

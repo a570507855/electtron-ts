@@ -1,48 +1,9 @@
 const ref = require('ref-napi');
 const refArray = require('ref-array-napi');
 
-import { Point, Rect, MSG } from './Cstruct';
+import { Point, Rect } from './Cstruct';
 import user32 from './user32';
 import kernel32 from './kernel32';
-
-interface User32 {
-  MessageBoxW: Function;
-  GetForegroundWindow: Function;
-  FindWindowW: Function;
-  WindowFromPoint: Function;
-
-  SendMessageW: Function;
-  GetMessageW: Function;
-  PostMessageW: Function;
-  PostThreadMessageW: Function;
-
-  GetActiveWindow: Function;
-  SetActiveWindow: Function;
-
-  GetCursorPos: Function;
-  SetCursorPos: Function;
-
-  GetWindowRect: Function;
-
-  GetWindowTextW: Function;
-  SetWindowTextW: Function;
-
-  GetClassNameW: Function;
-
-  MoveWindow: Function;
-
-  ChangeWindowMessageFilterEx: Function;
-
-  GetCurrentProcess: Function;
-  GetCurrentProcessId: Function;
-  GetCurrentThread: Function;
-  GetCurrentThreadId: Function;
-  GetWindowThreadProcessId: Function;
-
-  GetLastError: Function;
-
-  SetThreadPriority: Function;
-}
 
 export default {
   MessageBoxW: (title: string, content: string, HWND: number = 0, type: number = 1): number => {
@@ -65,8 +26,8 @@ export default {
   SendMessageW: (HWND: number, msg: number, wParam: number, lParam: number) => {
     return new Promise((resolve, reject) => {
       let res = user32.SendMessageW(HWND, msg, wParam, lParam);
-      res ? resolve(res) : reject(res);
-    })
+      res ? resolve(res) : reject(kernel32.GetLastError());
+    });
   },
 
   GetMessageW: (PMSG: any, HWND: number, firstMSG: number, lastMSG: number) => {
@@ -76,8 +37,8 @@ export default {
   PostMessageW: (HWND: number, msg: number, wParam: number, lParam: number) => {
     return new Promise((resolve, reject) => {
       let res = user32.PostMessageW(HWND, msg, wParam, lParam);
-      res ? resolve(res) : reject(res);
-    })
+      res ? resolve(res) : reject(kernel32.GetLastError());
+    });
   },
 
   PostThreadMessageW: (threadid: number, msg: number, wParam: number, lParam: number) => {
@@ -141,6 +102,10 @@ export default {
     return user32.SetWindowPos(HWND, HWNDSetAfter, x, y, cx, cy, flags)
   },
 
+  ShowWindow: (HWND: number, showStatus: number) => {
+    return user32.ShowWindow(HWND, showStatus);
+  },
+
   GetCurrentProcess: () => {
     return kernel32.GetCurrentProcess();
   },
@@ -163,7 +128,7 @@ export default {
 
   SetThreadPriority: (threadHWND: number, priority: number) => {
     return kernel32.SetThreadPriority(threadHWND, priority);
-  }
+  },
 
 };
 

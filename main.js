@@ -9,7 +9,7 @@ mainWindow = null;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 800,
+    width: 1400,
     height: 800,
     show: false,
     webPreferences: {
@@ -29,6 +29,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
   createWindow();
+  mainWindow.webContents.openDevTools();
 });
 
 app.on('window-all-closed', () => {
