@@ -1,16 +1,21 @@
 <template>
   <div id="app">
-    <!-- <div class="section">
-      <a @click="onGetFileContent" class="button is-primary">获取文件内容</a>
-      <div class="message">
-        <div class="message-header">{{fileName}}</div>
-        <div class="message-body">
-          <div>{{fileContent}}</div>
-        </div>
-      </div>
-    </div>-->
+    <div class="tabs is-centered is-boxed">
+      <ul>
+        <li
+          :class="{ 'is-active': currentIndex === index }"
+          v-for="(tab, index) in tabs"
+          :key="index"
+          @click="currentIndex = index"
+        >
+          <a>
+            <span>{{ tab }}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <WindowInfo v-show="currentIndex === 1"></WindowInfo>
     <div class="section">
-      <WindowInfo></WindowInfo>
       <div class="field is-grouped">
         <div class="control">
           <a @click="onFindWindow" class="button is-primary">
@@ -22,13 +27,17 @@
           <a @click="onSetWindowTitle" class="button is-primary">设置标题</a>
         </div>
         <div class="control">
-          <a @click="onSetActiveWindow" class="button is-primary">设置活跃窗口</a>
+          <a @click="onSetActiveWindow" class="button is-primary"
+            >设置活跃窗口</a
+          >
         </div>
         <div class="control">
           <a @click="onToggleShowWindow" class="button is-primary">显示/隐藏</a>
         </div>
         <div class="control">
-          <a @click="onToggleMaxmizeWindow" class="button is-primary">最大化/最小化</a>
+          <a @click="onToggleMaxmizeWindow" class="button is-primary"
+            >最大化/最小化</a
+          >
         </div>
         <div class="control">
           <a @click="onReduction" class="button is-primary">还原</a>
@@ -37,7 +46,11 @@
       <div class="field">
         <div class="control">
           <label class="label">窗口类名:</label>
-          <input class="input" placeholder="窗口类名" v-model="windowClassName" />
+          <input
+            class="input"
+            placeholder="窗口类名"
+            v-model="windowClassName"
+          />
         </div>
       </div>
       <div class="field">
@@ -114,6 +127,8 @@ const { globalShortcut } = require("electron").remote;
   },
 })
 export default class App extends Vue {
+  currentIndex: number = 0;
+  tabs: object = ["功能", "信息"];
   isShow: boolean = true;
   isMaxmize: boolean = false;
   windowTitle: string = "";

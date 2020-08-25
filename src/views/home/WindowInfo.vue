@@ -15,13 +15,23 @@
     <div class="field">
       <div class="control">
         <label class="label">窗口进程ID:</label>
-        <input class="input" placeholder="窗口进程id" type="text" v-model="windowProcessid_HEX" />
+        <input
+          class="input"
+          placeholder="窗口进程id"
+          type="text"
+          v-model="windowProcessid_HEX"
+        />
       </div>
     </div>
     <div class="field">
       <div class="control">
         <label class="label">窗口线程ID:</label>
-        <input class="input" placeholder="窗口线程id" type="text" v-model="windowThreadid_HEX" />
+        <input
+          class="input"
+          placeholder="窗口线程id"
+          type="text"
+          v-model="windowThreadid_HEX"
+        />
       </div>
     </div>
     <div class="field">
@@ -65,10 +75,20 @@
     </div>
     <div class="field is-grouped level">
       <div class="control">
-        <input class="input" placeholder="鼠标x坐标" type="text" v-model="cursorPos.x" />
+        <input
+          class="input"
+          placeholder="鼠标x坐标"
+          type="text"
+          v-model="cursorPos.x"
+        />
       </div>
       <div class="control">
-        <input class="input" placeholder="鼠标y坐标" type="text" v-model="cursorPos.y" />
+        <input
+          class="input"
+          placeholder="鼠标y坐标"
+          type="text"
+          v-model="cursorPos.y"
+        />
       </div>
       <div class="control">
         <a @click="onSetCursorPos" class="button is-primary">设置鼠标位置</a>
@@ -130,7 +150,7 @@ export default class WindowInfo extends Vue {
       this.curThreadid = win32API.GetCurrentThreadId();
       this.foregroundHWND = win32API.GetForegroundWindow();
       this.windowPoint = win32API.GetCursorPos();
-    },1000);
+    }, 1000);
   }
 }
 </script>

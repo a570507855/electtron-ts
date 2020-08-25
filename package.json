@@ -39,12 +39,16 @@
       "output": "D:/myElectronApp"
     },
     "files": [
-      "dist", "main.js"
+      "dist",
+      "main.js"
     ],
     "win": {
       "requestedExecutionLevel": "highestAvailable",
       "icon": "./yys.ico",
-      "target": ["nsis", "zip"]
+      "target": [
+        "nsis",
+        "zip"
+      ]
     },
     "nsis": {
       "oneClick": false,
