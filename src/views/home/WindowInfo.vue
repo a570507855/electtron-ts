@@ -78,48 +78,59 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import win32API from '../../dll/index'
-import util from '../../util/util'
-import { wMsg, wParam, nCmdShow } from '../../dll/Cenum'
-import { Point, Rect, MSG } from '../../dll/Cstruct'
+import Vue from "vue";
+import Component from "vue-class-component";
+import win32API from "../../dll/index";
+import util from "../../util/util";
+import { wMsg, wParam, nCmdShow } from "../../dll/Cenum";
+import { Point, Rect, MSG } from "../../dll/Cstruct";
 
 @Component
 export default class WindowInfo extends Vue {
-  windowProcessid: number = 0
-  windowThreadid: number = 0
-  cursorPos = { x: 0, y: 0 }
-  curProcess: number = 0
-  curProcessid: number = 0
-  curThread: number = 0
-  curThreadid: number = 0
+  name: string = "WindowInfo";
+  windowProcessid: number = 0;
+  windowThreadid: number = 0;
+  cursorPos = { x: 0, y: 0 };
+  curProcess: number = 0;
+  curProcessid: number = 0;
+  curThread: number = 0;
+  curThreadid: number = 0;
+  foregroundHWND: number = 0;
+  windowPoint: Object = { x: 0, y: 0 };
 
   get windowProcessid_HEX(): string {
-    return util.toHEX(this.windowProcessid)
+    return util.toHEX(this.windowProcessid);
   }
 
   get windowThreadid_HEX(): string {
-    return util.toHEX(this.windowThreadid)
+    return util.toHEX(this.windowThreadid);
   }
 
   get curProcessid_HEX(): string {
-    return util.toHEX(this.curProcessid)
+    return util.toHEX(this.curProcessid);
   }
 
   get curThreadid_HEX(): string {
-    return util.toHEX(this.curThreadid)
+    return util.toHEX(this.curThreadid);
+  }
+
+  get foregroundHWND_HEX(): string {
+    return util.toHEX(this.foregroundHWND);
   }
 
   onSetCursorPos(): void {
-    win32API.SetCursorPos(this.cursorPos.x, this.cursorPos.y)
+    win32API.SetCursorPos(this.cursorPos.x, this.cursorPos.y);
   }
 
   mouted(): void {
-    this.curProcess = win32API.GetCurrentProcess()
-    this.curProcessid = win32API.GetCurrentProcessId()
-    this.curThread = win32API.GetCurrentThread()
-    this.curThreadid = win32API.GetCurrentThreadId()
+    setInterval(() => {
+      this.curProcess = win32API.GetCurrentProcess();
+      this.curProcessid = win32API.GetCurrentProcessId();
+      this.curThread = win32API.GetCurrentThread();
+      this.curThreadid = win32API.GetCurrentThreadId();
+      this.foregroundHWND = win32API.GetForegroundWindow();
+      this.windowPoint = win32API.GetCursorPos();
+    },1000);
   }
 }
 </script>

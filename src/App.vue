@@ -10,6 +10,7 @@
       </div>
     </div>-->
     <div class="section">
+      <WindowInfo></WindowInfo>
       <div class="field is-grouped">
         <div class="control">
           <a @click="onFindWindow" class="button is-primary">
@@ -96,128 +97,124 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-//import WindowInfo from 'WindowInfo'
+import Vue from "vue";
+import Component from "vue-class-component";
+import WindowInfo from "./views/home/WindowInfo.vue";
 
-import win32API from './dll/index'
-import util from './util/util'
-import { wMsg, wParam, nCmdShow } from './dll/Cenum'
-import { Point, Rect, MSG } from './dll/Cstruct'
-import { win32 } from 'path'
+import win32API from "./dll/index";
+import util from "./util/util";
+import { wMsg, wParam, nCmdShow } from "./dll/Cenum";
+import { Point, Rect, MSG } from "./dll/Cstruct";
+import { win32 } from "path";
 
-const { globalShortcut } = require('electron').remote
-
-@Component
+const { globalShortcut } = require("electron").remote;
+@Component({
+  components: {
+    WindowInfo,
+  },
+})
 export default class App extends Vue {
-  isShow: boolean = true
-  isMaxmize: boolean = false
-  windowTitle: string = ''
-  windowClassName: any = null
-  windowHWND: number = 0
-  foregroundHWND: number = 0
-  activeHWND: number = 0
-  windowPoint: Object = { x: 0, y: 0 }
-  windowRect: any = { left: 0, right: 0, top: 0, bottom: 0 }
+  isShow: boolean = true;
+  isMaxmize: boolean = false;
+  windowTitle: string = "";
+  windowClassName: any = null;
+  windowHWND: number = 0;
+  activeHWND: number = 0;
+
+  windowRect: any = { left: 0, right: 0, top: 0, bottom: 0 };
 
   get HWND_HEX(): string {
-    return util.toHEX(this.windowHWND)
-  }
-
-  get foregroundHWND_HEX(): string {
-    return util.toHEX(this.foregroundHWND)
-  }
-
-  get activeHWND_HEX(): string {
-    return util.toHEX(this.activeHWND)
+    return util.toHEX(this.windowHWND);
   }
 
   get windowWidth(): number {
-    return this.windowRect.right - this.windowRect.left
+    return this.windowRect.right - this.windowRect.left;
   }
 
   get windowHeight(): number {
-    return this.windowRect.bottom - this.windowRect.top
+    return this.windowRect.bottom - this.windowRect.top;
+  }
+
+  get activeHWND_HEX(): string {
+    return util.toHEX(this.activeHWND);
   }
 
   onFindWindow(): void {
     this.windowHWND = win32API.FindWindowW(
       this.windowClassName,
       this.windowTitle
-    )
+    );
   }
 
   onSetWindowTitle(): void {
-    if (!this.windowHWND) return
+    if (!this.windowHWND) return;
 
-    win32API.SetWindowTextW(this.windowHWND, this.windowTitle)
-  }
-
-  onSetActiveWindow() {
-    this.activeHWND = win32API.SetActiveWindow(this.windowHWND)
+    win32API.SetWindowTextW(this.windowHWND, this.windowTitle);
   }
 
   onToggleShowWindow() {
-    if (!this.windowHWND) return
+    if (!this.windowHWND) return;
 
-    let showStatus = this.isShow ? nCmdShow.SW_HIDE : nCmdShow.SW_SHOW
-    this.isShow = !this.isShow
-    win32API.ShowWindow(this.windowHWND, showStatus)
+    let showStatus = this.isShow ? nCmdShow.SW_HIDE : nCmdShow.SW_SHOW;
+    this.isShow = !this.isShow;
+    win32API.ShowWindow(this.windowHWND, showStatus);
   }
 
   onToggleMaxmizeWindow() {
-    if (!this.windowHWND) return
+    if (!this.windowHWND) return;
 
     let maxmizeStatus = this.isMaxmize
       ? nCmdShow.SW_SHOWMINIMIZED
-      : nCmdShow.SW_SHOWMAXIMIZED
-    this.isMaxmize = !this.isMaxmize
-    win32API.ShowWindow(this.windowHWND, nCmdShow.SW_SHOWNORMAL)
-    win32API.ShowWindow(this.windowHWND, maxmizeStatus)
+      : nCmdShow.SW_SHOWMAXIMIZED;
+    this.isMaxmize = !this.isMaxmize;
+    win32API.ShowWindow(this.windowHWND, nCmdShow.SW_SHOWNORMAL);
+    win32API.ShowWindow(this.windowHWND, maxmizeStatus);
+  }
+
+  onSetActiveWindow() {
+    this.activeHWND = win32API.SetActiveWindow(this.windowHWND);
   }
 
   onReduction() {
-    if (!this.windowHWND) return
+    if (!this.windowHWND) return;
 
-    win32API.ShowWindow(this.windowHWND, nCmdShow.SW_SHOWNORMAL)
+    win32API.ShowWindow(this.windowHWND, nCmdShow.SW_SHOWNORMAL);
   }
 
   lButtonDown(x: number, y: number) {
-    if (!this.windowHWND) return
+    if (!this.windowHWND) return;
 
     win32API.PostMessageW(
       this.windowHWND,
       wMsg.WM_LBUTTONDOWN,
       wParam.MK_LBUTTON,
       util.getLparamPoint(x, y)
-    )
+    );
     win32API.PostMessageW(
       this.windowHWND,
       wMsg.WM_LBUTTONUP,
       0,
       util.getLparamPoint(x, y)
-    )
+    );
   }
 
   mounted(): void {
     setInterval(() => {
-      this.foregroundHWND = win32API.GetForegroundWindow()
-      this.activeHWND = win32API.GetActiveWindow()
-      this.windowPoint = win32API.GetCursorPos()
+      this.activeHWND = win32API.GetActiveWindow();
 
-      if (!this.windowHWND) return
+      if (!this.windowHWND) return;
 
-      this.windowRect = win32API.GetWindowRect(this.windowHWND)
+      this.windowRect = win32API.GetWindowRect(this.windowHWND);
       // this.windowTitle = win32API.GetWindowTextW(this.windowHWND, 100)
       // this.windowClassName = win32API.GetClassNameW(this.windowHWND, 100)
-    }, 500)
+    }, 500);
 
     //注册全局按键
-    globalShortcut.register('CommandOrControl+E', () => {
-      this.windowHWND = win32API.WindowFromPoint()
-      this.windowTitle = win32API.GetWindowTextW(this.windowHWND, 100)
-      this.windowClassName = win32API.GetClassNameW(this.windowHWND, 100)
-    })
+    globalShortcut.register("CommandOrControl+E", () => {
+      this.windowHWND = win32API.WindowFromPoint();
+      this.windowTitle = win32API.GetWindowTextW(this.windowHWND, 100);
+      this.windowClassName = win32API.GetClassNameW(this.windowHWND, 100);
+    });
   }
 }
 </script>
