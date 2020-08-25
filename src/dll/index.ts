@@ -5,8 +5,16 @@ import { Point, Rect } from './Cstruct';
 import user32 from './user32';
 import kernel32 from './kernel32';
 
+const ffi = require('ffi-napi');
+let test = new ffi.Library('hal', {});
+
 export default {
-  MessageBoxW: (title: string, content: string, HWND: number = 0, type: number = 1): number => {
+  MessageBoxW: (
+    title: string,
+    content: string,
+    HWND: number = 0,
+    type: number = 1
+  ): number => {
     return user32.MessageBoxW(HWND, toCString(content), toCString(title), type);
   },
 
@@ -41,7 +49,12 @@ export default {
     });
   },
 
-  PostThreadMessageW: (threadid: number, msg: number, wParam: number, lParam: number) => {
+  PostThreadMessageW: (
+    threadid: number,
+    msg: number,
+    wParam: number,
+    lParam: number
+  ) => {
     return user32.PostThreadMessageW(threadid, msg, wParam, lParam);
   },
 
@@ -82,7 +95,14 @@ export default {
     return bufTrim(str_buf).toString('ucs2');
   },
 
-  MoveWindow: (HWND: number, x: number, y: number, width: number, height: number, isRedraw: boolean) => {
+  MoveWindow: (
+    HWND: number,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    isRedraw: boolean
+  ) => {
     return user32.MoveWindow(HWND, x, y, width, height, isRedraw);
   },
 
@@ -94,12 +114,26 @@ export default {
     return user32.GetWindowThreadProcessId(HWND, processid);
   },
 
-  mouse_event: (flags: number, x: number, y: number, data: number, extrainfo: number) => {
+  mouse_event: (
+    flags: number,
+    x: number,
+    y: number,
+    data: number,
+    extrainfo: number
+  ) => {
     return user32.mouse_event(flags, x, y, data, extrainfo);
   },
 
-  SetWindowPos: (HWND: number, HWNDSetAfter: number, x: number, y: number, cx: number, cy: number, flags: number): boolean => {
-    return user32.SetWindowPos(HWND, HWNDSetAfter, x, y, cx, cy, flags)
+  SetWindowPos: (
+    HWND: number,
+    HWNDSetAfter: number,
+    x: number,
+    y: number,
+    cx: number,
+    cy: number,
+    flags: number
+  ): boolean => {
+    return user32.SetWindowPos(HWND, HWNDSetAfter, x, y, cx, cy, flags);
   },
 
   ShowWindow: (HWND: number, showStatus: number) => {
@@ -129,7 +163,6 @@ export default {
   SetThreadPriority: (threadHWND: number, priority: number) => {
     return kernel32.SetThreadPriority(threadHWND, priority);
   },
-
 };
 
 /**
@@ -143,7 +176,7 @@ function toCString(str: string, encoding: string = 'ucs2') {
 
 /**
  * 去除Buffer尾端的空白数据
- * @param buf 
+ * @param buf
  */
 function bufTrim(buf: Buffer) {
   let new_buf = new Buffer(0);
@@ -155,4 +188,3 @@ function bufTrim(buf: Buffer) {
   }
   return new_buf;
 }
-

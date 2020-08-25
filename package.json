@@ -11,7 +11,8 @@
     "ref-array-napi": "^1.2.1",
     "ref-napi": "^3.0.0",
     "ref-struct-napi": "^1.1.1",
-    "vue": "^2.6.12"
+    "vue": "^2.6.12",
+    "vue-property-decorator": "^9.0.0"
   },
   "devDependencies": {
     "@types/node": "^14.6.0",

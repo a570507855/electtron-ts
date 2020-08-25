@@ -1,5 +1,5 @@
 <template>
-  <div id="windowInfo">
+  <div class="section" id="windowInfo">
     <div class="field">
       <div class="control">
         <label class="label">前台窗口句柄:</label>
@@ -15,23 +15,13 @@
     <div class="field">
       <div class="control">
         <label class="label">窗口进程ID:</label>
-        <input
-          class="input"
-          placeholder="窗口进程id"
-          type="text"
-          v-model="windowProcessid_HEX"
-        />
+        <input class="input" placeholder="窗口进程id" type="text" v-model="windowProcessid_HEX" />
       </div>
     </div>
     <div class="field">
       <div class="control">
         <label class="label">窗口线程ID:</label>
-        <input
-          class="input"
-          placeholder="窗口线程id"
-          type="text"
-          v-model="windowThreadid_HEX"
-        />
+        <input class="input" placeholder="窗口线程id" type="text" v-model="windowThreadid_HEX" />
       </div>
     </div>
     <div class="field">
@@ -75,20 +65,10 @@
     </div>
     <div class="field is-grouped level">
       <div class="control">
-        <input
-          class="input"
-          placeholder="鼠标x坐标"
-          type="text"
-          v-model="cursorPos.x"
-        />
+        <input class="input" placeholder="鼠标x坐标" type="text" v-model="cursorPos.x" />
       </div>
       <div class="control">
-        <input
-          class="input"
-          placeholder="鼠标y坐标"
-          type="text"
-          v-model="cursorPos.y"
-        />
+        <input class="input" placeholder="鼠标y坐标" type="text" v-model="cursorPos.y" />
       </div>
       <div class="control">
         <a @click="onSetCursorPos" class="button is-primary">设置鼠标位置</a>
@@ -98,16 +78,15 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-import win32API from "../../dll/index";
-import util from "../../util/util";
-import { wMsg, wParam, nCmdShow } from "../../dll/Cenum";
-import { Point, Rect, MSG } from "../../dll/Cstruct";
+import { Prop, Component, Vue } from 'vue-property-decorator';
+import win32API from '../../dll/index';
+import util from '../../util/util';
+import { wMsg, wParam, nCmdShow } from '../../dll/Cenum';
+import { Point, Rect, MSG } from '../../dll/Cstruct';
 
 @Component
 export default class WindowInfo extends Vue {
-  name: string = "WindowInfo";
+  name: string = 'WindowInfo';
   windowProcessid: number = 0;
   windowThreadid: number = 0;
   cursorPos = { x: 0, y: 0 };
@@ -117,6 +96,9 @@ export default class WindowInfo extends Vue {
   curThreadid: number = 0;
   foregroundHWND: number = 0;
   windowPoint: Object = { x: 0, y: 0 };
+  activeHWND: number = 0;
+
+  //@Prop({ default: 0 }) HWND!: number;
 
   get windowProcessid_HEX(): string {
     return util.toHEX(this.windowProcessid);
@@ -138,11 +120,15 @@ export default class WindowInfo extends Vue {
     return util.toHEX(this.foregroundHWND);
   }
 
+  get activeHWND_HEX(): string {
+    return util.toHEX(this.activeHWND);
+  }
+
   onSetCursorPos(): void {
     win32API.SetCursorPos(this.cursorPos.x, this.cursorPos.y);
   }
 
-  mouted(): void {
+  mounted(): void {
     setInterval(() => {
       this.curProcess = win32API.GetCurrentProcess();
       this.curProcessid = win32API.GetCurrentProcessId();
@@ -150,6 +136,7 @@ export default class WindowInfo extends Vue {
       this.curThreadid = win32API.GetCurrentThreadId();
       this.foregroundHWND = win32API.GetForegroundWindow();
       this.windowPoint = win32API.GetCursorPos();
+      this.activeHWND = win32API.GetActiveWindow();
     }, 1000);
   }
 }
